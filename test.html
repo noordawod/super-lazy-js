@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <title>Lazy JS test</title>
+    <script type="text/javascript">
+      (function(window, document) {
+        var debug,
+            lastChunk,
+            append = function() {
+              var string, strings = Array.prototype.slice.call(arguments);
+              while(!!(string = strings.shift()))
+                debug.appendChild(document.createTextNode(string));
+            };
+
+        // Define the global callback functions, before loading Lazy JS.
+        window.lazyOnSuccess = function() {
+          append('\n\n', 'Loaded all scripts successfully!');
+        };
+
+        window.lazyOnProgress = function(chunkId, src, timeElapsed) {
+          append('\n');
+          if(chunkId !== lastChunk) {
+            lastChunk = chunkId;
+            append('\n');
+          }
+          append('Loaded: ' + src + ' [' + chunkId + '] in ' + timeElapsed + ' msec.');
+        };
+
+        window.lazyOnChunk = function(chunkId, timeElapsed) {
+          append('\n', 'Loaded chunk "' + chunkId + '" in ' + timeElapsed + ' msec.');
+        };
+
+        window.lazyOnError = function(chunkId, src) {
+          append('\n', 'Error loading: ' + src + ' [' + chunkId + ']');
+        };
+
+        window.lazyCanStart = function() {
+          debug = document.getElementById('debug');
+          append('Starting...');
+          return true;
+        };
+      })(window, document);
+    </script>
+  </head>
+  <body>
+    <pre id="debug"></pre>
+    <script data-can-start="lazyCanStart"
+            data-on-success="lazyOnSuccess"
+            data-on-progress="lazyOnProgress"
+            data-on-chunk="lazyOnChunk"
+            data-on-error="lazyOnError"
+            data-prefix="lazy"
+            data-libs="http://code.jquery.com/jquery-1.9.1.js https://raw.github.com/douglascrockford/JSON-js/master/json2.js https://raw.github.com/mrdoob/three.js/master/src/Three.js"
+            data-plugins="http://code.jquery.com/ui/1.8.24/jquery-ui.js http://code.jquery.com/color/jquery.color-2.1.2.js"
+            type="text/javascript" src="lazy-auto.js"></script>
+  </body>
+</html>
