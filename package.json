@@ -1,0 +1,28 @@
+{
+  "name": "super-lazy-js",
+  "version": "1.0.8",
+  "description": "A minimalist, powerful and asynchronous lazy loader for JavaScript files.",
+  "main": "lazy.js",
+  "scripts": {
+    "test": "echo \"Open test.html in your favorite browser\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/noordawod/super-lazy-js"
+  },
+  "keywords": [
+    "lazy",
+    "load",
+    "loader",
+    "js",
+    "javascript",
+    "minimal",
+    "async",
+    "asynchronous"
+  ],
+  "author": "Noor Dawod <noor@fine47.com> (https://ello.co/noor-dawod)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/noordawod/super-lazy-js/issues"
+  }
+}
