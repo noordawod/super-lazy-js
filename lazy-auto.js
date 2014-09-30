@@ -1,5 +1,5 @@
 /*!
- * Lazy JS v1.0.7
+ * Lazy JS v1.0.8
  * https://github.com/noordawod/lazy-js
  *
  * Copyright (C) 2013-2014 Noor Dawod.
@@ -50,6 +50,7 @@
       HANDLERS = 'handlers',
       QUEUE = 'queue',
       PREFIX = 'prefix',
+      BASEURI = 'baseURI',
       ONLOAD = 'on' + LOAD,
       LOADING = LOAD + 'ing',
       ONREADYSTATECHANGE = 'onreadystatechange',
@@ -177,6 +178,7 @@
       // 'this' points to the target LazyJS instantiated object.
       loadAsync = function(chunkId, queue, successCallback, errorCallback) {
         var self = this,
+            baseURI = self[BASEURI],
             size = queue[LENGTH],
             loaded = 0,
             src,
@@ -206,7 +208,7 @@
 
         // Go over list of scripts and load them one after the other.
         while(!!(src = queue[SHIFT]())) {
-          loadScript[CALL](self, src, onSuccess, onError);
+          loadScript[CALL](self, baseURI + src, onSuccess, onError);
         }
       },
 
@@ -295,6 +297,9 @@
               // Define the prefix used for class identifiers on the HTML element.
               self[PREFIX] = 'lazy';
 
+              // Define a base URI to add to all scripts.
+              self[BASEURI] = '';
+
               // Queue of scripts to load.
               self[QUEUE] = [];
 
@@ -348,6 +353,10 @@
                       break;
 
                     case PREFIX:
+                      self[key] = value;
+                      break;
+
+                    case BASEURI:
                       self[key] = value;
                       break;
 
@@ -438,6 +447,9 @@
         return LazyJS;
       })();
 
+  // Expose Lazy JS implementation.
+  window.LazyJS = LazyJS;
+
   // Check the DOM tree for meta-data holding scripts to load.
   setTimeout(function() {
     var RE_DATA_PREFIX = /^data-/,
@@ -490,8 +502,5 @@
 
     config = NULL;
   }, 50);
-
-  // Expose Lazy JS implementation.
-  window.LazyJS = LazyJS;
 
 })(window, null);
