@@ -331,6 +331,7 @@
                   // Process the meta-data.
                   switch(key) {
                     // These might be defined in the HTML code.
+                    case 'base-uri':
                     case 'can-start':
                     case 'on-progress':
                     case 'on-chunk':
