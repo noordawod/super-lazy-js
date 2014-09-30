@@ -1,5 +1,5 @@
 /*!
- * Lazy JS v1.0.6
+ * Lazy JS v1.0.7
  * https://github.com/fineswap/lazy-js
  *
  * Copyright (C) 2013-2014 Fineswap Blog & App
@@ -27,7 +27,7 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-;var LazyJS = (function(window, Object, Array, Date, NULL, undefined) {
+(function(window, NULL, undefined) {
   'use strict';
 
   // Mentioned few times in the code, declare them here to gain better minification.
@@ -72,9 +72,10 @@
       noop = function() {},
 
       is = function(object, type, classType) {
-        if(undefined === object || NULL === object)
+        if(undefined === object || NULL === object) {
           return FALSE;
-        classType = Object[PROTOTYPE].toString[CALL](object)[SLICE](8, -1)[TOLOWERCASE]();
+        }
+        classType = window.Object[PROTOTYPE].toString[CALL](object)[SLICE](8, -1)[TOLOWERCASE]();
         return classType === type[TOLOWERCASE]();
       },
 
@@ -87,7 +88,7 @@
       },
 
       cloneArray = function(array, startFrom) {
-        return Array[PROTOTYPE].slice[CALL](array, startFrom || 0);
+        return window.Array[PROTOTYPE].slice[CALL](array, startFrom || 0);
       },
 
       defaultStartHandler = function() {
@@ -102,8 +103,9 @@
       // 'this' points to the target LazyJS instantiated object.
       fireCallback = function(handlerId) {
         var self = this, callback = self[HANDLERS][handlerId];
-        if(is(callback, 'string'))
+        if(is(callback, 'string')) {
           callback = window[callback];
+        }
         return isFunction(callback)
           ? callback.apply(self, cloneArray(arguments, 1))
           : undefined;
@@ -118,11 +120,13 @@
       },
 
       removeClass = function(cls) {
-        html[CLASSNAME] = trim(html[CLASSNAME][REPLACE](new RegExp('\s*' + cls + '\s*', 'g'), ' '));
+        html[CLASSNAME] = trim(html[CLASSNAME][REPLACE](
+          new RegExp('\\s*' + cls + '\\s*', 'g'), ' ')
+        );
       },
 
       getTime = function() {
-        return +new Date;
+        return +new window.Date();
       },
 
       // Create a new script element, and load a script from the provided URL.
@@ -158,10 +162,11 @@
 
           try {
             timer = getTime();
-            if(head[FIRSTCHILD])
+            if(head[FIRSTCHILD]) {
               head.insertBefore(script, head[FIRSTCHILD]);
-            else
+            } else {
               head.appendChild(script);
+            }
           } catch (e) {
             onError();
           }
@@ -200,8 +205,9 @@
         addClass(self[PREFIX] + '-' + chunkId);
 
         // Go over list of scripts and load them one after the other.
-        while(!!(src = queue[SHIFT]()))
+        while(!!(src = queue[SHIFT]())) {
           loadScript[CALL](self, src, onSuccess, onError);
+        }
       },
 
       // Load a bunch of scripts synchronously.
@@ -226,16 +232,17 @@
               // Load them asynchronously.
               if(!self.quit) {
                 // Fire a callback to update the app.
-                if(chunkId)
+                if(chunkId) {
                   fireCallback[CALL](self, ONCHUNK, chunkId, timeElapsed);
+                }
 
                 // Get next bunch of scripts.
                 queue = self[QUEUE][SHIFT]();
 
                 // If there are more scripts, load them now.
-                if(queue && queue[LENGTH])
+                if(queue && queue[LENGTH]) {
                   loadAsync[CALL](self, queue[0], queue[1], loadNextChunk, errorCallback);
-                else {
+                } else {
                   // Finished loading all scripts!
                   removeIdClass();
 
@@ -249,33 +256,37 @@
             };
 
         // Pull for 10 seconds only (quite a long time in Web realm, anyway.)
-        if(getTime() < self[ONLOAD] + 9999)
+        if(getTime() < self[ONLOAD] + 9999) {
           // Pull until canStart handler approves the start sequence.
-          if(TRUE !== fireCallback[CALL](self, CANSTART))
+          if(TRUE !== fireCallback[CALL](self, CANSTART)) {
             setTimeout(loadSync, 100);
-          else {
+          } else {
             // Add relevant class to the HTML element.
             addClass(self[PREFIX] + '-' + LOADING);
 
             // Start loading the first chunk of scripts.
             loadNextChunk(FALSE);
           }
-        else
+        } else {
           fireCallback[CALL](self, ONERROR, '*');
+        }
       },
 
       // Lazy JS exposed implementation.
+      /* jshint maxcomplexity:30 */
       LazyJS = (function() {
         var LazyJS = function(config) {
               var self = this, key, value, length, configCopy, loop, pos;
 
               // Make sure that new LazyJS() is always used.
-              if(!(self instanceof LazyJS))
+              if(!(self instanceof LazyJS)) {
                 throw 'LazyJS must be instantiated using the new operator.';
+              }
 
               if(config) {
-                if(!isArray(config) || 0 === config[LENGTH] || config[LENGTH] % 2)
+                if(!isArray(config) || 0 === config[LENGTH] || config[LENGTH] % 2) {
                   throw 'Configuration must be an Array holding even number of entries.';
+                }
 
                 // Clone original Array.
                 configCopy = cloneArray(config);
@@ -322,9 +333,11 @@
                     case 'on-error':
                       // Make the variable point to the callable function name.
                       pos = key.indexOf('-');
-                      key = key[SUBSTR](0, pos) + key.charAt(++pos).toUpperCase() + key[SUBSTR](++pos, 7);
+                      key = key[SUBSTR](0, pos)
+                        + key.charAt(++pos).toUpperCase()
+                        + key[SUBSTR](++pos, 7);
 
-                      // No break here!
+                    /* falls through */
                     case CANSTART:
                     case ONPROGRESS:
                     case ONCHUNK:
@@ -341,8 +354,9 @@
                     default:
                       // Default behavior is to add the list of scripts. Scripts must be
                       // separated by a space character if more than one is listed.
-                      if(!isArray(value))
+                      if(!isArray(value)) {
                         value = value.split(' ');
+                      }
 
                       // Add the scripts along with their identifier.
                       self[ADD](key, value);
@@ -358,54 +372,61 @@
 
         // Default handler before Lazy JS starts loading scripts.
         LazyJSPrototype[CANSTART] = function(handler) {
-          if(!handler)
+          if(!handler) {
             return this[HANDLERS][CANSTART];
+          }
           return (this[HANDLERS][CANSTART] = handler);
         };
 
         // Define a callback when a script has loaded successfully.
         LazyJSPrototype[ONPROGRESS] = function(handler) {
-          if(!handler)
+          if(!handler) {
             return this[HANDLERS][ONPROGRESS];
+          }
           return (this[HANDLERS][ONPROGRESS] = handler);
         };
 
         // Define a callback when a chunk of scripts has loaded successfully.
         LazyJSPrototype[ONCHUNK] = function(handler) {
-          if(!handler)
+          if(!handler) {
             return this[HANDLERS][ONCHUNK];
+          }
           return (this[HANDLERS][ONCHUNK] = handler);
         };
 
         // Define a callback when all scripts have been loaded successfully.
         LazyJSPrototype[ONSUCCESS] = function(handler) {
-          if(!handler)
+          if(!handler) {
             return this[HANDLERS][ONSUCCESS];
+          }
           return (this[HANDLERS][ONSUCCESS] = handler);
         };
 
         // Define a callback when an error is detected while loading any of the scripts.
         LazyJSPrototype[ONERROR] = function(handler) {
-          if(!handler)
+          if(!handler) {
             return this[HANDLERS][ONERROR];
+          }
           return (this[HANDLERS][ONERROR] = handler);
         };
 
         // Add a list of scripts to load asynchronously.
         LazyJSPrototype[ADD] = function(chunkId, scripts) {
-          if(!isArray(scripts))
+          if(!isArray(scripts)) {
             scripts = [scripts];
-          if(scripts && scripts[LENGTH])
+          }
+          if(scripts && scripts[LENGTH]) {
             this[QUEUE][PUSH]([chunkId, scripts]);
+          }
         };
 
         // Fire-off the loading process and start loading all enqueued scripts!
         LazyJSPrototype[LOAD] = function() {
           var self = this;
-          if(!self[QUEUE][LENGTH])
+          if(!self[QUEUE][LENGTH]) {
             // Queue is empty... Run the success handler.
             self[HANDLERS][ONSUCCESS]();
-          else if(!self[ONLOAD]) {
+          } else if(!self[ONLOAD]) {
             // Mark start time for the loading process.
             self[ONLOAD] = getTime();
 
@@ -450,8 +471,9 @@
             if(RE_DATA_PREFIX[TEST](variable[NODENAME])) {
               value = variable.nodeValue;
               variable = variable[NODENAME][REPLACE](RE_DATA_PREFIX, '');
-              if(variable)
+              if(variable) {
                 config[PUSH](variable, value);
+              }
             }
           }
         }
@@ -462,12 +484,14 @@
     } while(length > ++loop);
 
     // If config is not empty, then load the scripts!
-    if(0 < config[LENGTH])
+    if(0 < config[LENGTH]) {
       (new LazyJS(config))[LOAD]();
+    }
 
     config = NULL;
   }, 50);
 
-  // Return the exposed Lazy JS implementation.
-  return LazyJS;
-})(window, Object, Array, Date, null);
+  // Expose Lazy JS implementation.
+  window.LazyJS = LazyJS;
+
+})(window, null);
