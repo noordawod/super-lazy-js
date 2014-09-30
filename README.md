@@ -187,5 +187,5 @@ Terms of Use
 
 [mitlicense]: http://en.wikipedia.org/wiki/MIT_License        "MIT License"
 [modernizr]:  http://modernizr.com/                           "Modernizr"
-[dom-ready]:  https://github.com/fineswap/dom-ready           "DOM Ready"
+[dom-ready]:  https://github.com/noordawod/dom-ready          "DOM Ready"
 [zopfli]:     https://code.google.com/p/zopfli/               "Zopfli"

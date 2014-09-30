@@ -1,9 +1,9 @@
 /*!
  * Lazy JS v1.0.7
- * https://github.com/fineswap/lazy-js
+ * https://github.com/noordawod/lazy-js
  *
- * Copyright (C) 2013-2014 Fineswap Blog & App
- * http://fineswap.com/
+ * Copyright (C) 2013-2014 Noor Dawod.
+ * All rights reserved.
  *
  * Released under the MIT license
  * http://en.wikipedia.org/wiki/MIT_License
