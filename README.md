@@ -50,6 +50,11 @@ Recognized keys are one or more of the following:
   Lazy JS adds a class name *'lazy-libs'* to the HTML element. Once loading has finished
   successfully, the class name is replaced with *'lazy-libs-loaded'*.
 
+- <code>baseURI</code>: *String*, defaults to *''*  
+  Base URI is used by Lazy JS to build the final URL of all scripts. This is great for setting
+  logical paths to scripts, and then setting this option to the base URI, which could change
+  between environments (development, production, etc.)
+
 - <code>canStart()</code>: *Callback* *(default handler returns true always)*  
   Before beginning to load any of the scripts, Lazy JS calls this function. If the function
   returns *true*, Lazy JS starts the loading process, but not before that. Lazy JS will continue
@@ -148,6 +153,7 @@ The same can done in just one line using Lazy JS automatic version:
       <body>
         ...
       <script data-can-start="lazyCanStart"
+              data-base-uri="//production.cdn.example.com/"
               data-on-progress="lazyOnProgress"
               data-on-chunk="lazyOnChunk"
               data-on-success="lazyOnSuccess"
